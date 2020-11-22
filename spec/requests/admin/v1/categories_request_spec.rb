@@ -59,4 +59,57 @@ RSpec.describe "Admin::V1::Categories", type: :request do
       end
     end
   end
+
+  context "PATCH /categories/:id" do
+    let(:category) { create(:category) }
+    let(:url) { "/admin/v1/categories/#{category.id}" }
+
+    context "with valid params" do
+      let(:category_name) { 'My new Category' }
+      let(:category_params) do
+        { category: { name: category_name } }.to_json
+      end
+
+      it 'updates Category' do
+        patch url, headers: auth_header(user), params: category_params
+        category.reload
+        expect(category.name).to eq category_name
+      end
+
+      it 'returns updated Category' do
+        patch url, headers: auth_header(user), params: category_params
+        category.reload
+        expected_category = category.as_json(only: %i(id name))
+        expect(body_json['category']). to eq expected_category
+      end
+
+      it 'returns success status' do
+        patch url, headers: auth_header(user), params: category_params
+        expect(response). to have_http_status(:ok)
+      end
+    end
+
+    context "with invalid params" do
+      let(:category_invalid_params) do
+        { category: attributes_for(:category, name: nil) }.to_json
+      end
+
+      it 'does not update Category' do
+        old_name = category.name
+        patch url, headers: auth_header(user), params: category_invalid_params
+        category.reload
+        expect(category.name).to eq old_name
+      end
+
+      it 'returns erro message' do
+        patch url, headers: auth_header(user), params: category_invalid_params
+        expect(body_json['errors']['fields']).to have_key('name')
+      end
+
+      it 'return unprocessable_entity status' do
+        patch url, headers: auth_header(user), params: category_invalid_params
+        expect(response). to have_http_status(:unprocessable_entity)
+      end
+    end
+  end
 end
