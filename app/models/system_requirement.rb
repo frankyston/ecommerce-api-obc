@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class SystemRequirement < ApplicationRecord
   has_many :games, dependent: :restrict_with_error
   
