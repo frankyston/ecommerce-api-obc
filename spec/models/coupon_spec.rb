@@ -12,6 +12,9 @@ RSpec.describe Coupon, type: :model do
   it { is_expected.to validate_numericality_of(:max_use).only_integer.is_greater_than_or_equal_to(0) }
   it { is_expected.to validate_presence_of :due_date }
 
+  it_behaves_like "name searchable concern", :coupon
+  it_behaves_like "paginatable concern", :coupon
+
   it 'cant have post due date' do
     subject.due_date = 1.day.ago
     subject.valid?
