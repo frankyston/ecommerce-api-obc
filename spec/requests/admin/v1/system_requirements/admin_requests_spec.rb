@@ -85,13 +85,15 @@ RSpec.describe 'Admin::V1::SystemRequirements as :admin', type: :request do
       it 'returns updated system_requirement' do
         patch url, headers: auth_header(user), params: system_requirement_params
         system_requirement.reload
-        expected_system_requirement = system_requirement.as_json(only: %i(id name operational_system storage processor memory video_board))
-        expect(body_json['system_requirement']). to eq expected_system_requirement
+        expected_system_requirement = system_requirement.as_json(
+          only: %i(id name operational_system storage processor memory video_board)
+        )
+        expect(body_json['system_requirement']).to eq expected_system_requirement
       end
 
       it 'returns success status' do
         patch url, headers: auth_header(user), params: system_requirement_params
-        expect(response). to have_http_status(:ok)
+        expect(response).to have_http_status(:ok)
       end
     end
 
@@ -114,7 +116,7 @@ RSpec.describe 'Admin::V1::SystemRequirements as :admin', type: :request do
 
       it 'return unprocessable_entity status' do
         patch url, headers: auth_header(user), params: system_requirement_invalid_params
-        expect(response). to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
